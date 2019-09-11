@@ -20,7 +20,7 @@ The resulting critique will be located in the file ```critique.txt```
 ---
 ##### Reproduction
 There are two folders, ```scheduler_buggy``` and ```scheduler_fixed```.
-Each one will contain a Dockerfile of a Linux image, preloaded with the benchmark tools provided by the authors of the paper (which can be found [here](https://github.com/jplozi/wastedcores)).
+Each one will somehow contain a Linux image [trying Qemu now], preloaded with the benchmark tools provided by the authors of the paper (which can be found [here](https://github.com/jplozi/wastedcores)).
 The file ```reproduction.pdf``` should contain:
 - [ ] A write-up of what experiment you are trying to reproduce (identify the corresponding tables/graphs from the original paper).
 - [ ] A description of your experimental setup.
