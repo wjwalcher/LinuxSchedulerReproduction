@@ -25,8 +25,15 @@ for i in `ls *.tbl`; do
   psql -U postgres tpch -q -c "TRUNCATE $table"
   psql -U postgres tpch -c "\\copy $table FROM '/tmp/$i' CSV DELIMITER '|'"
 done
+psql -U postgres tpch -c "ANALYZE VERBOSE"
 
-
+mkdir q18 
+for i in $(seq 1 22); do
+  touch q18/${i}.sql
+done
+cp queries/18.sql q18
+DSS_QUERY=q18 ./qgen | sed 's/day (3)/day/' > q18.sql
+psql -U postgres tpch < q18.sql
 
 difficulties:
 -hardware is not cheap or easy to find (eg rasp pi)
