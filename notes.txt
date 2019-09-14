@@ -13,3 +13,14 @@ cp makefile.suite Makefile
 sed -i 's/DATABASE=/DATABASE= ORACLE/' Makefile
 sed -i 's/MACHINE =/MACHINE = LINUX/' Makefile
 sed -i 's/WORKLOAD =/WORKLOAD = TPCH/' Makefile
+
+
+
+
+
+difficulties:
+-hardware is not cheap or easy to find (eg rasp pi)
+-no system dump to replicate
+	-finding a distro with kernel 4.1
+	-no mention of the db used
+	-what is the 18th query? Many different batch sizes, many different files
