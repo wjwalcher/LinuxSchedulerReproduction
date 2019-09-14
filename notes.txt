@@ -13,8 +13,18 @@ cp makefile.suite Makefile
 sed -i 's/DATABASE=/DATABASE= ORACLE/' Makefile
 sed -i 's/MACHINE =/MACHINE = LINUX/' Makefile
 sed -i 's/WORKLOAD =/WORKLOAD = TPCH/' Makefile
+make
 
-
+./dbgen -vf
+createdb tpch
+psql tpch -f dss.ddl
+for i in `ls *.tbl`; do
+  table=${i/.tbl/}
+  echo "Loading $table..."
+  sed 's/|$//' $i > /tmp/$i
+  psql tpch -q -c "TRUNCATE $table"
+  psql tpch -c "\\copy $table FROM '/tmp/$i' CSV DELIMITER '|'"
+done
 
 
 
@@ -23,4 +33,4 @@ difficulties:
 -no system dump to replicate
 	-finding a distro with kernel 4.1
 	-no mention of the db used
-	-what is the 18th query? Many different batch sizes, many different files
+	-what is the 18th query? Many different scale factors
