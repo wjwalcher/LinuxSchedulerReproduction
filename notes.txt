@@ -16,14 +16,14 @@ sed -i 's/WORKLOAD =/WORKLOAD = TPCH/' Makefile
 make
 
 ./dbgen -vf
-createdb tpch
-psql tpch -f dss.ddl
+createdb -U postgres tpch
+psql -U postgres tpch -f dss.ddl
 for i in `ls *.tbl`; do
   table=${i/.tbl/}
   echo "Loading $table..."
   sed 's/|$//' $i > /tmp/$i
-  psql tpch -q -c "TRUNCATE $table"
-  psql tpch -c "\\copy $table FROM '/tmp/$i' CSV DELIMITER '|'"
+  psql -U postgres tpch -q -c "TRUNCATE $table"
+  psql -U postgres tpch -c "\\copy $table FROM '/tmp/$i' CSV DELIMITER '|'"
 done
 
 
