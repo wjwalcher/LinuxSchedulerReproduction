@@ -1,0 +1,15 @@
+boot:
+setup-alpine
+
+installed:
+qemu-system-x86_64 -m 512 -enable-kvm -nic user,hostfwd=tcp::10022-:22 -hda alpine.qcow2
+
+ssh root@localhost -p 10022
+#stuff to run via ssh
+apk add openssh postgresql build-base
+git clone https://github.com/tpc-h/tpc-h.git
+cd tpc-h/2.18.0_rc2/dbgen
+cp makefile.suite Makefile
+sed -i 's/DATABASE=/DATABASE= ORACLE/' Makefile
+sed -i 's/MACHINE =/MACHINE = LINUX/' Makefile
+sed -i 's/WORKLOAD =/WORKLOAD = TPCH/' Makefile
