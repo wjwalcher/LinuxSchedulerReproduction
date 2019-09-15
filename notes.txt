@@ -68,6 +68,7 @@ make modules_install
 ##### install kernel on alpine 
 cp arch/x86/boot/bzImage /boot/vmlinuz-linux41
 mkinitfs 4.1.52
+mv /boot/initramfs-vanilla /boot/initramfs-linux41
 update-extlinux #adds to boot menu
 
 ### difficulties:
