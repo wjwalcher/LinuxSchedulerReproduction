@@ -61,7 +61,7 @@ unxz linux-4.1.52.tar.xz && tar -xf linux-4.1.52.tar
 mv linux-4.1.52 linux-4.1.vanilla
 cd linux-4.1.vanilla
 cp /boot/config-grsec .config
-apk add coreutils bison flex openssl-dev linux-headers libelf-dev bc perl
+#apk add coreutils bison flex openssl-dev linux-headers libelf-dev bc perl
 yes "" | make oldconfig
 yes "" | make -j $(nproc)
 cd .. && tar czf linux-4.1.vanilla.tgz linux-4.1.vanilla
