@@ -1,15 +1,19 @@
-### boot:
+### boot (from host)
+qemu-img create -f qcow2 alpine.qcow2 8G
+qemu-system-x86_64 -m 512 -nic user -boot d -cdrom alpine-3.3.0-x86_64.iso -hda alpine.qcow2 -enable-kvm
+
+### install system (from guest)
 setup-alpine -q
 
-### launch installed system
+### launch installed system (from host)
 qemu-system-x86_64 -m 512 -enable-kvm -nic user,hostfwd=tcp::10022-:22 -hda alpine.qcow2
 
-### run from host
+### connect (from host)
 ssh root@localhost -p 10022
 
-#### stuff to run inside the ssh session
-### get tpc deps
-apk add openssh postgresql build-base
+### stuff to run inside the ssh session
+#### get tpc deps
+apk add postgresql build-base
 git clone https://github.com/tpc-h/tpc-h.git
 cd tpc-h/2.18.0_rc2/dbgen
 cp makefile.suite Makefile
@@ -18,7 +22,7 @@ sed -i 's/MACHINE =/MACHINE = LINUX/' Makefile
 sed -i 's/WORKLOAD =/WORKLOAD = TPCH/' Makefile
 make $(nprocs)
 
-### build tpch
+#### build tpch
 ./dbgen -vf
 createdb -U postgres tpch
 psql -U postgres tpch -f dss.ddl
@@ -30,7 +34,7 @@ for i in `ls *.tbl`; do
   psql -U postgres tpch -c "\\copy $table FROM '/tmp/$i' CSV DELIMITER '|'"
 done
 
-### prepare tpch queries (run 18 only)
+#### prepare tpch queries (run 18 only)
 rm -rf q18 && mkdir q18 
 for i in $(seq 1 22); do
   touch q18/${i}.sql
@@ -39,11 +43,11 @@ sed '$ d' queries/18.sql > q18/18.sql
 #for trailing ; #tac queries/18.sql | sed '2s/;//' | tac > q18/18.sql 
 DSS_QUERY=q18 ./qgen | sed 's/day (3)/day/' > finalq18.sql
 
-### run the query
+#### run the query
 time psql -U postgres tpch < finalq18.sql
 
 
-### kernel compile
+#### kernel compile
 mkdir compile_demo && cd compile_demo
 wget https://cdn.kernel.org/pub/linux/kernel/v5.x/linux-5.1.14.tar.xz
 tar xf linux-5.1.14.tar.xz
