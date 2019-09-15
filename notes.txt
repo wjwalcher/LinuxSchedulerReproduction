@@ -57,10 +57,11 @@ time psql -U postgres tpch < finalq18.sql
 #### kernel compile
 mkdir compile_demo && cd compile_demo
 wget http://cdn.kernel.org/pub/linux/kernel/v4.x/linux-4.1.52.tar.xz 
-tar xf linux-4.1.52.tar.xz
+unxz linux-4.1.52.tar.xz && tar -xf linux-4.1.52.tar
 cd linux-4.1.52
-cp /boot/config-vanilla .config
-apk add bison flex openssl-dev linux-headers libelf-dev
+cp /boot/config-grsec .config
+apk add coreutils bison flex openssl-dev linux-headers libelf-dev
+yes "" | make -j $(nproc) oldconfig
 yes "" | make -j $(nproc)
 
 
