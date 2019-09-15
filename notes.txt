@@ -54,16 +54,21 @@ DSS_QUERY=q18 ./qgen | sed 's/day (3)/day/' > finalq18.sql
 time psql -U postgres tpch < finalq18.sql
 
 
-#### kernel compile
+#### kernel compile on arch
 mkdir compile_demo && cd compile_demo
 wget http://cdn.kernel.org/pub/linux/kernel/v4.x/linux-4.1.52.tar.xz 
 unxz linux-4.1.52.tar.xz && tar -xf linux-4.1.52.tar
 cd linux-4.1.52
 cp /boot/config-grsec .config
 apk add coreutils bison flex openssl-dev linux-headers libelf-dev bc perl
-yes "" | make -j $(nproc) oldconfig
+yes "" | make oldconfig
 yes "" | make -j $(nproc)
 make modules_install
+
+##### install kernel on alpine 
+cp arch/x86/boot/bzImage /boot/vmlinuz-linux41
+mkinitfs 4.1.52
+update-extlinux #adds to boot menu
 
 ### difficulties:
 -hardware is not cheap or easy to find (eg rasp pi)
