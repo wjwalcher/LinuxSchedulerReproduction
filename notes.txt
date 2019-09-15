@@ -28,8 +28,9 @@ sed -i 's/MACHINE =/MACHINE = LINUX/' Makefile
 sed -i 's/WORKLOAD =/WORKLOAD = TPCH/' Makefile
 make $(nproc)
 
-#### build tpch
+#### load data
 ./dbgen -vf
+rc-service postgresql start
 createdb -U postgres tpch
 psql -U postgres tpch -f dss.ddl
 for i in `ls *.tbl`; do
