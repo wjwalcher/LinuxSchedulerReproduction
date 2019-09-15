@@ -18,10 +18,11 @@ ssh root@localhost -p 10022
 
 ### stuff to run inside the ssh session
 #### get tpc deps
-apk add postgresql build-base
+apk add postgresql git build-base
 git clone https://github.com/tpc-h/tpc-h.git
 cd tpc-h/2.18.0_rc2/dbgen
 cp makefile.suite Makefile
+sed -i 's/CC      = /CC = gcc/' Makefile
 sed -i 's/DATABASE=/DATABASE= ORACLE/' Makefile
 sed -i 's/MACHINE =/MACHINE = LINUX/' Makefile
 sed -i 's/WORKLOAD =/WORKLOAD = TPCH/' Makefile
