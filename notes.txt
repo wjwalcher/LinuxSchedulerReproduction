@@ -41,7 +41,7 @@ for i in `ls *.tbl`; do
   psql -U postgres tpch -c "\\copy $table FROM '/tmp/$i' CSV DELIMITER '|'"
 done
 
-#### prepare tpch queries (run 18 only)
+#### prepare tpch queries (run query 18 only)
 rm -rf q18 && mkdir q18 
 for i in $(seq 1 22); do
   touch q18/${i}.sql
@@ -54,7 +54,7 @@ DSS_QUERY=q18 ./qgen | sed 's/day (3)/day/' > finalq18.sql
 time psql -U postgres tpch < finalq18.sql
 
 
-#### kernel compile on arch
+#### kernel compile on arch (host)
 mkdir compile_demo && cd compile_demo
 wget http://cdn.kernel.org/pub/linux/kernel/v4.x/linux-4.1.52.tar.xz 
 unxz linux-4.1.52.tar.xz && tar -xf linux-4.1.52.tar
@@ -63,13 +63,27 @@ cp /boot/config-grsec .config
 apk add coreutils bison flex openssl-dev linux-headers libelf-dev bc perl
 yes "" | make oldconfig
 yes "" | make -j $(nproc)
-make modules_install
+cd .. && tar czf linux-4.1.52.vanilla.tgz
+scp -P 10022 linux-4.1.52.vanilla.tgz root@localhost:/root
 
-##### install kernel on alpine 
+##### install kernel on alpine (in guest)
+cd /root
+tar xzf linux-4.1.52.vanilla.tgz
+cd linux-4.1.52
+make modules_install
 cp arch/x86/boot/bzImage /boot/vmlinuz-linux41
 mkinitfs 4.1.52
 mv /boot/initramfs-vanilla /boot/initramfs-linux41
 update-extlinux #adds to boot menu
+
+### patch application (from host)
+cd .. #to compile_demo directory
+mv linux-4.1.52 linux-4.1.vanilla
+cp -R linux-4.1.vanilla linux-4.1.overload-on-wakeup
+wget https://raw.githubusercontent.com/jplozi/wastedcores/master/patches/overload_on_wakeup_linux_4.1.patch
+patch -u linux-4.1.overload-on-wakeup/kernel/sched/fair.c overload_on_wakeup_linux_4.1.patch
+cd linux-4.1.overload-on-wakeup
+make -j $(nproc)
 
 ### difficulties:
 -hardware is not cheap or easy to find (eg rasp pi)
