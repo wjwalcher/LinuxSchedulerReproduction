@@ -60,10 +60,10 @@ wget http://cdn.kernel.org/pub/linux/kernel/v4.x/linux-4.1.52.tar.xz
 unxz linux-4.1.52.tar.xz && tar -xf linux-4.1.52.tar
 cd linux-4.1.52
 cp /boot/config-grsec .config
-apk add coreutils bison flex openssl-dev linux-headers libelf-dev
+apk add coreutils bison flex openssl-dev linux-headers libelf-dev bc perl
 yes "" | make -j $(nproc) oldconfig
 yes "" | make -j $(nproc)
-
+make modules_install
 
 ### difficulties:
 -hardware is not cheap or easy to find (eg rasp pi)
