@@ -94,7 +94,7 @@ cd linux-4.1.overload-on-wakeup
 make modules_install
 cp arch/x86/boot/bzImage /boot/vmlinuz-linux41-overload-on-wakeup
 mkinitfs 4.1.52
-mv /boot/initramfs-overload-on-wakeup /boot/initramfs-linux41-overload-on-wakeup
+mv /boot/initramfs-vanilla /boot/initramfs-linux41-overload-on-wakeup
 update-extlinux #adds to boot menu
 
 ### difficulties:
