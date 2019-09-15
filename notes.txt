@@ -1,5 +1,5 @@
 ### boot (from host)
-qemu-img create -f qcow2 alpine.qcow2 8G
+qemu-img create -f qcow2 alpine.qcow2 16G
 qemu-system-x86_64 -m 512 -nic user -boot d -cdrom alpine-3.3.0-x86_64.iso -hda alpine.qcow2 -enable-kvm
 
 ### install system (from guest)
@@ -67,7 +67,7 @@ yes "" | make -j $(nproc)
 cd .. && tar czf linux-4.1.vanilla.tgz linux-4.1.vanilla
 scp -P 10022 linux-4.1.vanilla.tgz root@localhost:/root
 
-##### install kernel on alpine (in guest)
+##### install vanilla kernel on alpine (in guest)
 cd /root
 tar xzf linux-4.1.vanilla.tgz
 cd linux-4.1.vanilla
@@ -86,6 +86,16 @@ cd linux-4.1.overload-on-wakeup
 make -j $(nproc)
 cd .. && tar czf linux-4.1.overload-on-wakeup.tgz linux-4.1.overload-on-wakeup
 scp -P 10022 linux-4.1.overload-on-wakeup.tgz root@localhost:/root
+
+##### install overload kernel on alpine (in guest)
+cd /root
+tar xzf linux-4.1.overload-on-wakeup.tgz
+cd linux-4.1.overload-on-wakeup
+make modules_install
+cp arch/x86/boot/bzImage /boot/vmlinuz-linux41-overload-on-wakeup
+mkinitfs 4.1.52
+mv /boot/initramfs-overload-on-wakeup /boot/initramfs-linux41-overload-on-wakeup
+update-extlinux #adds to boot menu
 
 ### difficulties:
 -hardware is not cheap or easy to find (eg rasp pi)
