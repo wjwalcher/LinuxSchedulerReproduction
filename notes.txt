@@ -36,6 +36,16 @@ sed '$ d' queries/18.sql > q18/18.sql
 DSS_QUERY=q18 ./qgen | sed 's/day (3)/day/' > finalq18.sql
 psql -U postgres tpch < finalq18.sql
 
+
+kernel compile
+mkdir compile_demo && cd compile_demo
+wget https://cdn.kernel.org/pub/linux/kernel/v5.x/linux-5.1.14.tar.xz
+tar xf linux-5.1.14.tar.xz
+cd linux-5.1.14
+cp /boot/config-vanilla .config
+apk add bison flex openssl-dev linux-headers libelf-dev
+yes "" | make -j $(nproc)
+
 difficulties:
 -hardware is not cheap or easy to find (eg rasp pi)
 -no system dump to replicate
