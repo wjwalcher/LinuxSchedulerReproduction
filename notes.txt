@@ -77,7 +77,7 @@ mkinitfs 4.1.52
 mv /boot/initramfs-vanilla /boot/initramfs-linux41-vanilla
 update-extlinux #adds to boot menu
 
-### patch application (from host)
+### overload-on-wakeup patch application (from host)
 cd .. #to compile_demo directory
 cp -R -p linux-4.1.vanilla linux-4.1.overload-on-wakeup
 wget https://raw.githubusercontent.com/jplozi/wastedcores/master/patches/overload_on_wakeup_linux_4.1.patch
@@ -87,7 +87,7 @@ make -j $(nproc)
 cd .. && tar czf linux-4.1.overload-on-wakeup.tgz linux-4.1.overload-on-wakeup
 scp -P 10022 linux-4.1.overload-on-wakeup.tgz root@localhost:/root
 
-##### install overload kernel on alpine (in guest)
+##### install overload-on-wakeup kernel on alpine (in guest)
 cd /root
 tar xzf linux-4.1.overload-on-wakeup.tgz
 cd linux-4.1.overload-on-wakeup
@@ -96,6 +96,45 @@ cp arch/x86/boot/bzImage /boot/vmlinuz-linux41-overload-on-wakeup
 mkinitfs 4.1.52
 mv /boot/initramfs-vanilla /boot/initramfs-linux41-overload-on-wakeup
 update-extlinux #adds to boot menu
+
+### scheduling-groups patch application (from host)
+cd .. #to compile_demo directory
+cp -R -p linux-4.1.vanilla linux-4.1.scheduling-groups
+wget https://raw.githubusercontent.com/jplozi/wastedcores/master/patches/scheduling_group_construction_linux_4.1.patch
+patch -u linux-4.1.scheduling-groups/kernel/sched/core.c scheduling_group_construction_linux_4.1.patch
+cd linux-4.1.scheduling-groups
+make -j $(nproc)
+cd .. && tar czf linux-4.1.scheduling-groups.tgz linux-4.1.scheduling-groups
+scp -P 10022 linux-4.1.scheduling-groups.tgz root@localhost:/root
+
+##### install scheduling-groups kernel on alpine (in guest)
+cd /root
+tar xzf linux-4.1.scheduling-groups.tgz
+cd linux-4.1.scheduling-groups
+make modules_install
+cp arch/x86/boot/bzImage /boot/vmlinuz-linux41-scheduling-groups
+mkinitfs 4.1.52
+mv /boot/initramfs-vanilla /boot/initramfs-linux41-scheduling-groups
+update-extlinux #adds to boot menu
+
+### both (apply overload on top of scheduling groups) (run from host)
+mv linux-4.1.scheduling-groups linux-4.1.both
+patch -u linux-4.1.both/kernel/sched/fair.c overload_on_wakeup_linux_4.1.patch
+cd linux-4.1.both
+make -j $(nproc)
+cd .. && tar czf linux-4.1.both.tgz linux-4.1.both
+scp -P 10022 linux-4.1.both.tgz root@localhost:/root
+
+##### install both kernel on alpine (in guest)
+cd /root
+tar xzf linux-4.1.both.tgz
+cd linux-4.1.both
+make modules_install
+cp arch/x86/boot/bzImage /boot/vmlinuz-linux41-both
+mkinitfs 4.1.52
+mv /boot/initramfs-vanilla /boot/initramfs-linux41-both
+update-extlinux #adds to boot menu
+
 
 ### difficulties:
 -hardware is not cheap or easy to find (eg rasp pi)
