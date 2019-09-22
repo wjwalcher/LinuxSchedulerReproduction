@@ -135,10 +135,8 @@ mkinitfs 4.1.52
 mv /boot/initramfs-vanilla /boot/initramfs-linux41-both
 update-extlinux #adds to boot menu
 
+##### NAS benchmarks
+wget https://www.nas.nasa.gov/assets/npb/NPB3.4.tar.gz
+tar xzf NPB3.4.tar.gz
+cd NPB3.4
 
-### difficulties:
--hardware is not cheap or easy to find (eg rasp pi)
--no system dump to replicate
-	-finding a distro with kernel 4.1
-	-no mention of the db used
-	-what is the 18th query? Many different scale factors
